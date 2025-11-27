@@ -1,0 +1,24 @@
+# ------------------------------------
+# server/.gitignore (For Node.js/Express Backend)
+# ------------------------------------
+
+# Dependencies
+/node_modules
+
+# Environment Variables (Crucial: Contains DB URI, secrets, etc.)
+.env
+.env.local
+
+/dist
+/out
+
+# Logs and Temp
+*.log
+npm-debug.log*
+tmp/
+
+# MongoDB dump files
+dump/
+
+# Generated files like session stores
+/sessions
