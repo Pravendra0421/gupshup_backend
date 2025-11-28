@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDb from "./config/databse.js";
 import {createServer} from "http";
 import UserRoute from "./routes/UserRoute.js";
+import MessageRoute from "./routes/messageRoute.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
 import { initializeSocketIo } from "./socket/SocketHandler.js";
@@ -21,6 +22,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1',UserRoute);
+app.use('/api/v1',MessageRoute);
 app.get('/',(req,res)=>{
     res.send("backend is running");
 });
