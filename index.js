@@ -23,8 +23,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1',UserRoute);
 app.use('/api/v1',MessageRoute);
-app.get('/',(req,res)=>{
-    res.send("backend is running");
+app.get('/ping', (req, res) => {
+    res.send('Pong');
 });
 httpServer.listen(PORT,()=>{
     console.log(`server is running ${PORT}`)
