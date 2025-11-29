@@ -4,7 +4,7 @@ import Redis from "ioredis";
 export const initializeSocketIo = (httpServer) => {
     const io = new Server(httpServer, {
         cors: {
-            origin: "http://localhost:5173",
+            origin: process.env.Frontend_URL,
             methods: ["GET", "POST", "PUT", "DELETE"],
             credentials: true
         }

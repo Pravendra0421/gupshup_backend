@@ -14,7 +14,7 @@ const PORT =process.env.PORT;
 const httpServer=createServer(app);
 const io = initializeSocketIo(httpServer);
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:process.env.Frontend_URL,
     methods:["GET","POST","PUT","DELETE"],
     credentials:true
 }
