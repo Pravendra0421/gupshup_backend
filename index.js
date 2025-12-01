@@ -19,8 +19,8 @@ app.use(cors({
     credentials:true
 }
 ));
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
 app.use('/api/v1',UserRoute);
 app.use('/api/v1',MessageRoute);
 app.get('/ping', (req, res) => {

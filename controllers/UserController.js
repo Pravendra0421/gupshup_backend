@@ -73,10 +73,13 @@ export const LoginController = async (req,res)=>{
             process.env.JWT_SECRET,
             {expiresIn:'1d'}
         );
+        const isProduction = process.env.NODE_ENV === "production";
         return res.status(200).cookie("token",token,{
             httpOnly:true,
-            secure:process.env.NODE_ENV == "production",
-            sameSite:"none",
+            // secure: process.env.NODE_ENV === "production", 
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
             maxAge:1*24*60*60*1000
         }).json({
             success:true,
