@@ -13,6 +13,7 @@ connectDb();
 const PORT =process.env.PORT;
 const httpServer=createServer(app);
 const io = initializeSocketIo(httpServer);
+app.set("trust proxy", 1);
 app.use(cors({
     origin:process.env.Frontend_URL,
     methods:["GET","POST","PUT","DELETE"],
