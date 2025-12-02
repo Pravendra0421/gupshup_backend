@@ -19,7 +19,7 @@ export const initializeSocketIo = (httpServer) => {
 
     redis.on("connect", () => console.log("✅ Connected to Redis Phonebook"));
     redis.on("error", (error) => console.log("❌ Redis Error", error));
-
+    const onlineUsers = new Map();
     io.on("connection", (socket) => {
         
         // 1. ADD USER TO REDIS
@@ -28,6 +28,10 @@ export const initializeSocketIo = (httpServer) => {
                 await redis.set(`user:${userId}`, socket.id);
                 socket.userId = userId; // Save to socket object for disconnect
                 // console.log(`User ${userId} mapped to ${socket.id}`);
+                console.log("📢 Current Online Users Map:", Array.from(onlineUsers.keys()));
+                onlineUsers.set(userId,socket.id);
+                const onlineIds = Array.from(onlineUsers.keys());
+                io.emit("online-users",onlineIds);
             }
         });
 
@@ -49,6 +53,10 @@ export const initializeSocketIo = (httpServer) => {
             if(socket.userId){
                 await redis.del(`user:${socket.userId}`);
                 console.log(`User ${socket.userId} disconnected`);
+
+                onlineUsers.delete(socket.userId);
+                const onlineIds = Array.from(onlineUsers.keys());
+                io.emit("online-users",onlineIds);
             }
         });
     });
