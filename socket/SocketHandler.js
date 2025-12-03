@@ -47,8 +47,16 @@ export const initializeSocketIo = (httpServer) => {
                 });
             }
         });
-        
-        // 3. CLEANUP ON DISCONNECT
+        socket.on("logout",async (userId)=>{
+            if(userId){
+                await redis.del(`user:${userId}`);
+                console.log(`user ${userId} logged out manually`);
+                onlineUsers.delete(userId);
+                const onlineIds = Array.from(onlineUsers.keys());
+                io.emit("online-users",onlineIds);
+                socket.userId == null;
+            }
+        });
         socket.on("disconnect", async () => {
             if(socket.userId){
                 await redis.del(`user:${socket.userId}`);
@@ -59,6 +67,7 @@ export const initializeSocketIo = (httpServer) => {
                 io.emit("online-users",onlineIds);
             }
         });
+        
     });
     return io;
 }
