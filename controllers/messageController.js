@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import MessageModel from "../models/MessageModel.js";
 export const addMessage =async (req,res)=>{
     try {
@@ -39,10 +40,68 @@ export const getMessage = async(req,res)=>{
         const projectedMessage = message.map((msg)=>{
             return{
                 fromSelf:msg.sender.toString() === from,
-                message:msg.message.text
+                message:msg.message.text,
+                read:msg.read
             };
         });
         return res.json(projectedMessage);
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            msg:"internal server error"
+        })
+    }
+}
+export const getUnreadCounts = async (req,res)=>{
+    try {
+        const currentUserId = req.user._id;
+        const unreadCounts = await MessageModel.aggregate([
+            {
+                $match:{
+                    Users:{$in:[currentUserId]},
+                    sender:{$ne:new mongoose.Types.ObjectId(currentUserId)},
+                    read:false
+                }
+            },
+            {
+                $group:{
+                    _id:"$sender",
+                    count:{$sum:1}
+                }
+            }
+        ]);
+        const countMap ={};
+        unreadCounts.forEach(item=>{
+            countMap[item._id] =item.count;
+        });
+        res.json({
+            success:true,
+            counts:countMap
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            msg:"internal server error"
+        })
+    }
+}
+export const markMessageRead = async (req,res)=>{
+    try {
+        const {from} = req.body;
+        const currentUserId = req.user._id;
+        await MessageModel.updateMany({
+            Users:{$all:[from,currentUserId]},
+            sender:from,
+            read:false
+        },
+        {
+            $set:{read:true}
+        }
+    );
+    res.json({
+        success:true,
+        msg:"Messages marked as read"
+    });
     } catch (error) {
         return res.status(500).json({
             success:false,
