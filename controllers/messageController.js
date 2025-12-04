@@ -38,7 +38,7 @@ export const getMessage = async(req,res)=>{
         // We calculate 'fromSelf' right here to make frontend logic easier
         const projectedMessage = message.map((msg)=>{
             return{
-                fromself:msg.sender.toString() === from,
+                fromSelf:msg.sender.toString() === from,
                 message:msg.message.text
             };
         });
