@@ -66,7 +66,7 @@ export const initializeSocketIo = (httpServer) => {
             }
         })
         socket.on("call-user",async(data)=>{
-            const receiverSocket = await redis.get(`user:${data.to}`);
+            const receiverSocket = await redis.get(`user:${data.userToCall}`);
             if(receiverSocket){
                 io.to(receiverSocket).emit("call-user",{
                     signal:data.signalData,
