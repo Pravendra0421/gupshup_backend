@@ -74,6 +74,12 @@ export const initializeSocketIo = (httpServer) => {
                 })
             }
         })
+        socket.on("party-joined",async(data)=>{
+            const hostSocket = await redis.get(`user:${data.to}`);
+            if(hostSocket){
+                io.to(hostSocket).emit("viewer-joined",data.from);
+            }
+        });
         socket.on("call-user",async(data)=>{
             const receiverSocket = await redis.get(`user:${data.userToCall}`);
             if(receiverSocket){
