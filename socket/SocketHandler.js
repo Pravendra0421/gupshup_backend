@@ -65,15 +65,21 @@ export const initializeSocketIo = (httpServer) => {
                 socket.to(receiverSocket).emit("stop-typing",data.from);
             }
         })
-        socket.on("notify-watch-party",async(data)=>{
+        socket.on("notify-watch-party", async (data) => {
+            console.log("📢 notify-watch-party received:", data);
             const receiverSocket = await redis.get(`user:${data.to}`);
-            if(receiverSocket){
-                io.to(receiverSocket).emit("incoming-watch-party",{
-                    from:data.from,
-                    userName:data.userName
-                })
+            console.log("🔍 Looking up user:", data.to, "Found socket:", receiverSocket);
+            
+            if(receiverSocket) {
+                console.log("✅ Emitting incoming-watch-party to socket:", receiverSocket);
+                io.to(receiverSocket).emit("incoming-watch-party", {
+                    from: data.from,
+                    userName: data.userName
+                });
+            } else {
+                console.log("❌ User not found in Redis:", data.to);
             }
-        })
+        });
         socket.on("party-joined",async(data)=>{
             const hostSocket = await redis.get(`user:${data.to}`);
             if(hostSocket){
