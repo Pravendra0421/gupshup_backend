@@ -65,6 +65,15 @@ export const initializeSocketIo = (httpServer) => {
                 socket.to(receiverSocket).emit("stop-typing",data.from);
             }
         })
+        socket.on("notify-watch-party",async(data)=>{
+            const receiverSocket = await redis.get(`user:${data.to}`);
+            if(receiverSocket){
+                io.to(receiverSocket).emit("incoming-watch-party",{
+                    from:data.from,
+                    userName:data.userName
+                })
+            }
+        })
         socket.on("call-user",async(data)=>{
             const receiverSocket = await redis.get(`user:${data.userToCall}`);
             if(receiverSocket){
