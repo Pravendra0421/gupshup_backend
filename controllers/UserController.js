@@ -97,6 +97,57 @@ export const LoginController = async (req,res)=>{
         })
     }
 }
+export const SetProfile = async (req,res)=>{
+    try {
+        const currentUserId = req.user._id;
+        console.log("🔥 SetProfile Called!");
+        console.log("👉 User ID:", currentUserId);
+        console.log("👉 Request Body:", req.body);
+        const {name,image,about} = req.body;
+        const userData = await User.findByIdAndUpdate(currentUserId,
+            {
+                isAvatarImageSet:true,
+                avatarImage:image,
+                name,
+                about
+            },
+            {new:true}
+        );
+        if(!userData){
+            return res.status(404).json({message:"User not found in the database"});
+        }
+        console.log("✅ Updated Data:", userData);
+        return res.status(200).json({
+            success:true,
+            image:userData.avatarImage,
+            name:userData.name
+        })
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success:"false",
+            message:"Internal server error"
+        })
+    }
+}
+export const  GetProfile = async(req,res)=>{
+    try {
+        const currentUserId = req.user._id;
+        console.log("get current user id",currentUserId)
+        const getProfile = await User.findById(currentUserId);
+        console.log("getProfile",getProfile);
+        return res.status(200).json({
+            image:getProfile.avatarImage,
+            name:getProfile.name,
+            about:getProfile.about
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:"false",
+            message:"Internal server error"
+        })
+    }
+}
 export const GetAllUser = async (req,res)=>{
     try {
         const currentUserId = req.user.id;
