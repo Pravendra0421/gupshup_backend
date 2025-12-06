@@ -65,6 +65,21 @@ export const initializeSocketIo = (httpServer) => {
                 socket.to(receiverSocket).emit("stop-typing",data.from);
             }
         })
+        socket.on("call-user",async(data)=>{
+            const receiverSocket = await redis.get(`user:${data.to}`);
+            if(receiverSocket){
+                io.to(receiverSocket).emit("call-user",{
+                    signal:data.signalData,
+                    from:data.from
+                })
+            }
+        });
+        socket.on("answer-call",async(data)=>{
+            const senderSocket = await redis.get(`user:${data.to}`);
+            if(senderSocket){
+                io.to(senderSocket).emit("call-accepted",data.signal);
+            }
+        })
         socket.on("logout",async (userId)=>{
             if(userId){
                 await redis.del(`user:${userId}`);
